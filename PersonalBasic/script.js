@@ -11,7 +11,7 @@ const isOp = function (x) {
   }
   return false;
 };
-//display.innerHTML = "9+88*";
+
 const input = function () {
   last_char = display.innerHTML.charAt(display.innerHTML.length - 1);
   // if the last character is a zero and the current one is not an operation
@@ -27,6 +27,7 @@ const input = function () {
   // if the last character is an operation and the current one is not an operation
   // reached maximum number of operations: next operation will result in eval
   if (isOp(last_char) && !isOp(this.value)) {
+    // might remove
     op_limit = true;
     display.innerHTML += this.value;
     return;
@@ -42,8 +43,12 @@ const input = function () {
       return;
     }
   }
-
-  // if the last character is a number other than
+  // if the last character is a number and current one is an operation
+  if (!isOp(last_char) && isOp(this.value)) {
+    if (op_limit) {
+      equal();
+    }
+  }
   display.innerHTML += this.value;
 };
 const equal = function () {
@@ -55,7 +60,7 @@ const clear = function () {
 
 //Add the event listeners to each button : clear/equal/input
 for (let i = 0; i < buttons.length; i++) {
-  if (buttons[i].value == "CE") {
+  if (buttons[i].value == "C") {
     buttons[i].addEventListener("click", clear);
   } else if (buttons[i].value == "=") {
     buttons[i].addEventListener("click", equal);
@@ -63,8 +68,8 @@ for (let i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener("click", input);
   }
 }
-// Goal: Save calculation
-// Objective: When pressing an operation key multiple times allow the last key to change
-// on the display line
-
-// Add a variable counter
+document.addEventListener("keypress", (e) => {
+  for (let i = 0; i < buttons.length; i++) {
+    if (e.key == buttons[i].value) buttons[i].click();
+  }
+});

@@ -1,9 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;1,100&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron&display=swap");
 
 * {
   margin: 0;
   padding: 0;
-  font-family: "Lato";
+  font-family: "Orbitron", "Lato";
+  color: #ffad00;
 }
 html {
   background-color: #25161b;
@@ -21,6 +23,11 @@ html {
   background-color: #25161b;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+}
+.title {
+  margin-bottom: 8rem;
+  font-size: 7rem;
 }
 #calc {
   width: 70vw;
@@ -28,8 +35,8 @@ html {
   min-width: 700px;
   min-height: 400px;
   display: grid;
-  color: #ffad00;
-  font-size: 4vh;
+
+  font-size: 3.4rem;
   grid-template-columns: 20% 20% 20% 20% 20%;
   grid-template-rows: 20% 20% 20% 20% 20%;
 }
@@ -41,8 +48,8 @@ html {
   border-radius: 50px 50px 0 0;
   padding: 25px 20px 0px 20px;
   filter: blur(0);
-  font-size: 5vh;
-  text-align: right;
+  font-size: 4rem;
+  text-align: center;
 }
 #display:before {
   opacity: 0%;

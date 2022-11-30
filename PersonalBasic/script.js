@@ -68,8 +68,19 @@ for (let i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener("click", input);
   }
 }
+
+// Add event listeners to keyboard presses
 document.addEventListener("keypress", (e) => {
   for (let i = 0; i < buttons.length; i++) {
     if (e.key == buttons[i].value) buttons[i].click();
   }
 });
+
+/*
+ * Bugs:
+ * Result has potential to overload
+ *
+ * have to fix what happens if last char is a operation and user presses equals
+ *
+ * responsive
+ */

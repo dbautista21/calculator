@@ -3,7 +3,6 @@
 const buttons = document.querySelectorAll(".btn-op");
 const display = document.getElementById("display");
 display.innerText = "0";
-let op_limit = true;
 let last_char = null;
 
 /*
@@ -47,8 +46,6 @@ const input = function () {
    *
    */
   if (isOp(last_char) && !isOp(this.value)) {
-    // might remove
-    //op_limit = true;
     display.innerHTML += this.value;
     return;
   }
@@ -69,9 +66,7 @@ const input = function () {
    * Situation: The last character is a number and the current one is an operation
    */
   if (!isOp(last_char) && isOp(this.value)) {
-    if (op_limit) {
-      equal();
-    }
+    equal();
   }
   display.innerHTML += this.value;
 };

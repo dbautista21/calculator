@@ -4,6 +4,7 @@ const buttons = document.querySelectorAll(".btn-op");
 const display = document.getElementById("display");
 display.innerText = "0";
 let last_char = null;
+let result;
 
 /*
  * Is Operation Function
@@ -66,11 +67,24 @@ const input = function () {
    * Situation: The last character is a number and the current one is an operation
    */
   if (!isOp(last_char) && isOp(this.value)) {
-    equal();
+    for (let i = 0; i < display.innerHTML.length; i++) {
+      if (isOp(display.innerHTML[i])) {
+        equal();
+      }
+    }
+  }
+  /*
+   * Situation: User inputs a number after a result from a past equation is being
+   * displayed on screen
+   */
+  if (result == display.innerHTML) {
+    display.innerHTML = this.value;
+    return;
   }
   display.innerHTML += this.value;
 };
 const equal = function () {
+  this.blur();
   last_char = display.innerHTML.charAt(display.innerHTML.length - 1);
   /*
    * Situation: The user inputs a number, followed by an operator
@@ -85,18 +99,22 @@ const equal = function () {
   }
   // Evaluate the terms and operations in the text window, then display them
   display.innerHTML = eval(display.innerHTML);
+  result = eval(display.innerHTML);
+  console.log(result);
 };
 
 /*
  * FUNCTION: Clear the display window
  */
 const clear = function () {
+  this.blur();
   display.innerHTML = "0";
 };
 /*
  * FUNCTION: Delete the last character in the display window
  */
 const del = function () {
+  this.blur();
   // Situation: Last character is a number after the operation
   // Situation: Last character is an operation
   // Situation: Last character is a number before the operation
@@ -123,7 +141,6 @@ for (let i = 0; i < buttons.length; i++) {
 
 // Add event listeners to keyboard presses
 document.addEventListener("keydown", (e) => {
-  console.log(e.key);
   for (let i = 0; i < buttons.length; i++) {
     if (e.key == buttons[i].value) buttons[i].click();
     if (e.key == "Enter" && buttons[i].value == "=") buttons[i].click();
@@ -138,5 +155,5 @@ document.addEventListener("keydown", (e) => {
  *
  * responsive : Not fixed
  *
- * have to fix what happens when a equation is done and a number is pressed next
+ * have to fix what happens when a equation is done and a number is pressed next: fixed
  */

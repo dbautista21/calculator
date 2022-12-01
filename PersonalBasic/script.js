@@ -1,21 +1,29 @@
-"use script";
+"use strict";
 
 const buttons = document.querySelectorAll(".btn-op");
 const display = document.getElementById("display");
 display.innerText = "0";
-let op_limit = false;
+let op_limit = true;
+let last_char = null;
 
+/*
+ * Is Operation Function
+ */
 const isOp = function (x) {
   if (x === "+" || x === "-" || x === "/" || x === "*") {
     return true;
   }
   return false;
 };
-
+/*
+ * FUNCTION: Input Function: For operations and numbers
+ */
 const input = function () {
+  this.blur();
   last_char = display.innerHTML.charAt(display.innerHTML.length - 1);
-  // if the last character is a zero and the current one is not an operation
-  // Just replace the zero with the current input
+  /*
+   * Situation: The last and only character is a zero and the current one is a number
+   */
   if (
     last_char === "0" &&
     !isOp(this.value) &&
@@ -24,15 +32,29 @@ const input = function () {
     display.innerHTML = this.value;
     return;
   }
-  // if the last character is an operation and the current one is not an operation
-  // reached maximum number of operations: next operation will result in eval
+  // Situation: The last character after the operation is a 0 and the current one is a number
+  else if (
+    last_char === "0" &&
+    !isOp(this.value) &&
+    isOp(display.innerHTML.charAt(display.innerHTML.length - 2))
+  ) {
+    display.innerHTML =
+      display.innerHTML.substring(0, display.innerHTML.length - 1) + this.value;
+    return;
+  }
+  /*
+   * Situation: The last character is an operation and the current one is a number
+   *
+   */
   if (isOp(last_char) && !isOp(this.value)) {
     // might remove
-    op_limit = true;
+    //op_limit = true;
     display.innerHTML += this.value;
     return;
   }
-  // if the last character is an operation and the current one is an operation
+  /*
+   * Situation: The last character is an operation and the current one is an operation
+   */
   if (isOp(last_char) && isOp(this.value)) {
     if (last_char == this.value) {
       return;
@@ -43,7 +65,9 @@ const input = function () {
       return;
     }
   }
-  // if the last character is a number and current one is an operation
+  /*
+   * Situation: The last character is a number and the current one is an operation
+   */
   if (!isOp(last_char) && isOp(this.value)) {
     if (op_limit) {
       equal();
@@ -52,35 +76,72 @@ const input = function () {
   display.innerHTML += this.value;
 };
 const equal = function () {
+  last_char = display.innerHTML.charAt(display.innerHTML.length - 1);
+  /*
+   * Situation: The user inputs a number, followed by an operator
+   * followed by pressing the = button.
+   */
+  if (isOp(last_char)) {
+    display.innerHTML += display.innerHTML.substring(
+      0,
+      display.innerHTML.length - 1
+    );
+    return;
+  }
+  // Evaluate the terms and operations in the text window, then display them
   display.innerHTML = eval(display.innerHTML);
 };
+
+/*
+ * FUNCTION: Clear the display window
+ */
 const clear = function () {
   display.innerHTML = "0";
 };
+/*
+ * FUNCTION: Delete the last character in the display window
+ */
+const del = function () {
+  // Situation: Last character is a number after the operation
+  // Situation: Last character is an operation
+  // Situation: Last character is a number before the operation
+  display.innerHTML = display.innerHTML.substring(
+    0,
+    display.innerHTML.length - 1
+  );
+};
 
-//Add the event listeners to each button : clear/equal/input
+/*
+ * Add Event Listeners to all buttons on screen
+ */
 for (let i = 0; i < buttons.length; i++) {
   if (buttons[i].value == "C") {
     buttons[i].addEventListener("click", clear);
   } else if (buttons[i].value == "=") {
     buttons[i].addEventListener("click", equal);
+  } else if (buttons[i].value == "Backspace") {
+    buttons[i].addEventListener("click", del);
   } else {
     buttons[i].addEventListener("click", input);
   }
 }
 
 // Add event listeners to keyboard presses
-document.addEventListener("keypress", (e) => {
+document.addEventListener("keydown", (e) => {
+  console.log(e.key);
   for (let i = 0; i < buttons.length; i++) {
     if (e.key == buttons[i].value) buttons[i].click();
+    if (e.key == "Enter" && buttons[i].value == "=") buttons[i].click();
   }
 });
 
 /*
  * Bugs:
- * Result has potential to overload
+ * Result has potential to overload : Fixed by placing overflow-x
  *
- * have to fix what happens if last char is a operation and user presses equals
+ * have to fix what happens if last char is a operation and user presses equals : Fixed
  *
- * responsive
+ * responsive : Not fixed
+ *
+ * have to fix what happens when a equation is done and a number is pressed next
  */

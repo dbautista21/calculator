@@ -77,7 +77,7 @@ const input = function () {
    * Situation: User inputs a number after a result from a past equation is being
    * displayed on screen
    */
-  if (result == display.innerHTML) {
+  if (result == display.innerHTML && !isOp(this.value)) {
     display.innerHTML = this.value;
     return;
   }
@@ -122,6 +122,10 @@ const del = function () {
     0,
     display.innerHTML.length - 1
   );
+  // Situation: User deletes all numbers and operations from display window
+  if (display.innerHTML === "") {
+    display.innerHTML = "0";
+  }
 };
 
 /*

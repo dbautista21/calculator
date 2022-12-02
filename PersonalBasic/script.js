@@ -83,6 +83,9 @@ const input = function () {
   }
   display.innerHTML += this.value;
 };
+function parse(str) {
+  return Function(`return ${str}`)();
+}
 const equal = function () {
   this.blur();
   last_char = display.innerHTML.charAt(display.innerHTML.length - 1);
@@ -98,8 +101,8 @@ const equal = function () {
     return;
   }
   // Evaluate the terms and operations in the text window, then display them
-  display.innerHTML = eval(display.innerHTML);
-  result = eval(display.innerHTML);
+  display.innerHTML = parse(display.innerHTML);
+  result = parse(display.innerHTML);
   console.log(result);
 };
 
@@ -153,11 +156,9 @@ document.addEventListener("keydown", (e) => {
 
 /*
  * Bugs:
- * Result has potential to overload : Fixed by placing overflow-x
  *
- * have to fix what happens if last char is a operation and user presses equals : Fixed
+ *  Being responsive to mobile devices and different screen sizes
  *
- * responsive : Not fixed
+ *  Dealing with uncommon values such as infinity and NaN
  *
- * have to fix what happens when a equation is done and a number is pressed next: fixed
  */

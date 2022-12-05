@@ -47,7 +47,8 @@ html {
   grid-column-start: 1;
   grid-column-end: 6;
   border-radius: 50px 50px 0 0;
-  padding: 15px 20px 15px 20px;
+  padding: 10px 20px 0 20px;
+  padding: auto;
   filter: blur(0);
   font-size: 6vh;
   text-align: center;

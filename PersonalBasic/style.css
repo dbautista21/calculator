@@ -26,8 +26,9 @@ html {
   flex-direction: column;
 }
 .title {
-  margin-bottom: 8rem;
-  font-size: 7vw;
+  margin-bottom: 8vh;
+  font-size: 7vh;
+  text-align: center;
 }
 #calc {
   width: 70vw;
@@ -46,7 +47,7 @@ html {
   grid-column-start: 1;
   grid-column-end: 6;
   border-radius: 50px 50px 0 0;
-  padding: 10px 20px 10px 20px;
+  padding: 15px 20px 15px 20px;
   filter: blur(0);
   font-size: 6vh;
   text-align: center;
@@ -55,18 +56,24 @@ html {
 #display:before {
   opacity: 0%;
 }
-.calc-key {
+.key {
   background: transparent;
   color: inherit;
-  border: solid 1px #6e00b6;
   font-size: inherit;
   cursor: pointer;
   position: relative;
   filter: blur(0px);
-  position: relative;
+}
+.op-key {
+  border: solid 1px #d39f05;
+  box-shadow: 0 0 10px #f8d225;
+}
+.calc-key {
+  border: solid 1px #6e00b6;
   box-shadow: 0 0 10px #a648e4;
 }
-.calc-key::before {
+
+.key::before {
   content: " ";
   position: absolute;
   top: 0;
@@ -80,19 +87,24 @@ html {
   transition: filter 0.3s ease;
   transition: opacity 0.3s ease;
 }
-.calc-key:hover::before {
+.key:hover::before {
   filter: blur(0);
   opacity: 0%;
 }
 
-[id="1"] {
-  border-radius: 0 0 0 20px;
+[id="0"] {
+  grid-column-start: 2;
+  grid-column-end: 3;
+  grid-row-start: 5;
+  grid-row-end: 6;
 }
+
 #equal {
-  grid-column-start: 1;
+  grid-column-start: 4;
   grid-column-end: 6;
   grid-row-start: 5;
   grid-row-end: 6;
   font-size: 2.6rem;
-  border-radius: 0 0 50px 50px;
+  border-radius: 0 0 50px 0;
+  outline: none;
 }

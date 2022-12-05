@@ -1,21 +1,28 @@
-"use script";
+"use strict";
 
-const buttons = document.querySelectorAll(".btn-op");
+const buttons = document.querySelectorAll(".key");
 const display = document.getElementById("display");
 display.innerText = "0";
-let op_limit = false;
-
+let last_char = null;
+let result;
+/*
+ * Is Operation Function
+ */
 const isOp = function (x) {
   if (x === "+" || x === "-" || x === "/" || x === "*") {
     return true;
   }
   return false;
 };
-
+/*
+ * FUNCTION: Input Function: For operations and numbers
+ */
 const input = function () {
+  this.blur();
   last_char = display.innerHTML.charAt(display.innerHTML.length - 1);
-  // if the last character is a zero and the current one is not an operation
-  // Just replace the zero with the current input
+  /*
+   * Situation: The last and only character is a zero and the current one is a number
+   */
   if (
     last_char === "0" &&
     !isOp(this.value) &&
@@ -24,15 +31,27 @@ const input = function () {
     display.innerHTML = this.value;
     return;
   }
-  // if the last character is an operation and the current one is not an operation
-  // reached maximum number of operations: next operation will result in eval
+  // Situation: The last character after the operation is a 0 and the current one is a number
+  else if (
+    last_char === "0" &&
+    !isOp(this.value) &&
+    isOp(display.innerHTML.charAt(display.innerHTML.length - 2))
+  ) {
+    display.innerHTML =
+      display.innerHTML.substring(0, display.innerHTML.length - 1) + this.value;
+    return;
+  }
+  /*
+   * Situation: The last character is an operation and the current one is a number
+   *
+   */
   if (isOp(last_char) && !isOp(this.value)) {
-    // might remove
-    op_limit = true;
     display.innerHTML += this.value;
     return;
   }
-  // if the last character is an operation and the current one is an operation
+  /*
+   * Situation: The last character is an operation and the current one is an operation
+   */
   if (isOp(last_char) && isOp(this.value)) {
     if (last_char == this.value) {
       return;
@@ -43,33 +62,130 @@ const input = function () {
       return;
     }
   }
-  // if the last character is a number and current one is an operation
+  /*
+   * Situation: The last character is a number and the current one is an operation
+   */
   if (!isOp(last_char) && isOp(this.value)) {
-    if (op_limit) {
-      equal();
+    for (let i = 0; i < display.innerHTML.length; i++) {
+      if (isOp(display.innerHTML[i])) {
+        equal();
+      }
+    }
+  }
+  /*
+   * Situation: User inputs a number after a result from a past equation is being
+   * displayed on screen
+   */
+  if (result == display.innerHTML && !isOp(this.value)) {
+    display.innerHTML = this.value;
+    return;
+  }
+  // Situation: User inputs a number or operation after a NaN result is being displayed on screen
+  else if (display.innerHTML == "NaN") {
+    if (isOp(this.value)) return;
+    if (!isOp(this.value)) {
+      display.innerHTML = this.value;
+      return;
+    }
+  }
+  // Situation: User inputs a number or operation after an Infinity result is being displayed on screen
+  else if (display.innerHTML == "Infinity") {
+    if (isOp(this.value)) return;
+    if (!isOp(this.value)) {
+      display.innerHTML = this.value;
+      return;
     }
   }
   display.innerHTML += this.value;
 };
+
+/*
+ * FUNCTION : Instead of using eval (more security) Evaluate an expression
+ */
+function parse(str) {
+  return Function(`return ${str}`)();
+}
+/*
+ * FUNCTION : Handles all situations after user presses "=" button
+ */
 const equal = function () {
-  display.innerHTML = eval(display.innerHTML);
-};
-const clear = function () {
-  display.innerHTML = "0";
+  this.blur();
+  last_char = display.innerHTML.charAt(display.innerHTML.length - 1);
+  /*
+   * Situation: The user inputs a number, followed by an operator
+   * followed by pressing the = button.
+   */
+  if (isOp(last_char)) {
+    display.innerHTML += display.innerHTML.substring(
+      0,
+      display.innerHTML.length - 1
+    );
+    return;
+  }
+  // Evaluate the terms and operations in the text window, then display them
+  display.innerHTML = parse(display.innerHTML);
+  result = parse(display.innerHTML);
+  console.log(result);
 };
 
-//Add the event listeners to each button : clear/equal/input
+/*
+ * FUNCTION: Clear the display window
+ */
+const clear = function () {
+  this.blur();
+  display.innerHTML = "0";
+};
+/*
+ * FUNCTION: Delete the last character in the display window
+ */
+const del = function () {
+  this.blur();
+  /*
+   * Situation: User is pressing DEL button after an infinity or NaN result
+   */
+  if (display.innerHTML == "Infinity" || display.innerHTML == "NaN") {
+    display.innerHTML = "0";
+  }
+  // Situation: User is pressing DEL button to delete a prior operation or number
+  display.innerHTML = display.innerHTML.substring(
+    0,
+    display.innerHTML.length - 1
+  );
+  // Situation: User deletes all numbers and operations from display window
+  if (display.innerHTML === "") {
+    display.innerHTML = "0";
+  }
+};
+
+/*
+ * Add Event Listeners to all buttons on screen
+ */
 for (let i = 0; i < buttons.length; i++) {
   if (buttons[i].value == "C") {
     buttons[i].addEventListener("click", clear);
   } else if (buttons[i].value == "=") {
     buttons[i].addEventListener("click", equal);
+  } else if (buttons[i].value == "Backspace") {
+    buttons[i].addEventListener("click", del);
   } else {
     buttons[i].addEventListener("click", input);
   }
 }
-document.addEventListener("keypress", (e) => {
+
+// Add event listeners to keyboard presses
+document.addEventListener("keydown", (e) => {
   for (let i = 0; i < buttons.length; i++) {
     if (e.key == buttons[i].value) buttons[i].click();
+    if (e.key == "Enter" && buttons[i].value == "=") buttons[i].click();
   }
 });
+
+/*
+ * Bugs:
+ *
+ *  Being responsive to mobile devices and different screen sizes
+ *
+ *  Dealing with uncommon values such as infinity and NaN : done
+ *
+ *
+ */

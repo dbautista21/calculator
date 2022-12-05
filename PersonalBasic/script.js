@@ -1,6 +1,6 @@
 "use strict";
 
-const buttons = document.querySelectorAll(".btn-op");
+const buttons = document.querySelectorAll(".key");
 const display = document.getElementById("display");
 display.innerText = "0";
 let last_char = null;
@@ -86,6 +86,9 @@ const input = function () {
 function parse(str) {
   return Function(`return ${str}`)();
 }
+/*
+ * FUNCTION : Evaluates an expression inputted  by user
+ */
 const equal = function () {
   this.blur();
   last_char = display.innerHTML.charAt(display.innerHTML.length - 1);

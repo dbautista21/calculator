@@ -5,7 +5,6 @@ const display = document.getElementById("display");
 display.innerText = "0";
 let last_char = null;
 let result;
-
 /*
  * Is Operation Function
  */
@@ -81,13 +80,33 @@ const input = function () {
     display.innerHTML = this.value;
     return;
   }
+  // Situation: User inputs a number or operation after a NaN result is being displayed on screen
+  else if (display.innerHTML == "NaN") {
+    if (isOp(this.value)) return;
+    if (!isOp(this.value)) {
+      display.innerHTML = this.value;
+      return;
+    }
+  }
+  // Situation: User inputs a number or operation after an Infinity result is being displayed on screen
+  else if (display.innerHTML == "Infinity") {
+    if (isOp(this.value)) return;
+    if (!isOp(this.value)) {
+      display.innerHTML = this.value;
+      return;
+    }
+  }
   display.innerHTML += this.value;
 };
+
+/*
+ * FUNCTION : Instead of using eval (more security) Evaluate an expression
+ */
 function parse(str) {
   return Function(`return ${str}`)();
 }
 /*
- * FUNCTION : Evaluates an expression inputted  by user
+ * FUNCTION : Handles all situations after user presses "=" button
  */
 const equal = function () {
   this.blur();
@@ -121,9 +140,13 @@ const clear = function () {
  */
 const del = function () {
   this.blur();
-  // Situation: Last character is a number after the operation
-  // Situation: Last character is an operation
-  // Situation: Last character is a number before the operation
+  /*
+   * Situation: User is pressing DEL button after an infinity or NaN result
+   */
+  if (display.innerHTML == "Infinity" || display.innerHTML == "NaN") {
+    display.innerHTML = "0";
+  }
+  // Situation: User is pressing DEL button to delete a prior operation or number
   display.innerHTML = display.innerHTML.substring(
     0,
     display.innerHTML.length - 1
@@ -162,6 +185,7 @@ document.addEventListener("keydown", (e) => {
  *
  *  Being responsive to mobile devices and different screen sizes
  *
- *  Dealing with uncommon values such as infinity and NaN
+ *  Dealing with uncommon values such as infinity and NaN : done
+ *
  *
  */
